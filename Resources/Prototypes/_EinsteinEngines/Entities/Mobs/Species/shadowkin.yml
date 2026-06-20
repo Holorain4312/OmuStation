@@ -219,6 +219,7 @@
     defaultChannel: Empathy
     channels:
     - Empathy
+  - type: Darkswap # omu edit - Darksci part 1
   - type: Tag
     tags:
     - CanPilot

@@ -1,0 +1,16 @@
+- type: entity
+  id: DarkswapAction
+  name: Darkswap
+  description: Vanish into the darkness
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 6.5
+    icon: { sprite: _Goobstation/Actions/dash.rsi, state: icon }
+    itemIconStyle: NoItem
+    sound: !type:SoundPathSpecifier
+      path: /Audio/Effects/thudswoosh.ogg
+      params:
+        volume: 6.5
+  - type: InstantAction
+    event: !type:DarkswapEvent
