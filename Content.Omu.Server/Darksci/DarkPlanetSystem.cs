@@ -48,6 +48,7 @@ public sealed class DarkPlanetSystem : EntitySystem
         SubscribeLocalEvent<RoundStartingEvent>(OnRoundStart);
     }
 
+    //currently empty map that just adds the planet. useful to do it this way in case we decide to add prebuilt structures later. (shadowkin fortress when? :P)
     const string MapPath = "Maps/_Omu/Nonstations/darkoutpost.yml";
 
     //Works this way cause i want the place to be loaded in roundstart instead of something triggering it getting loaded, this way it's somewhat persistent and you can darkswap there roundstart
@@ -58,8 +59,17 @@ public sealed class DarkPlanetSystem : EntitySystem
         //Yes there is probably a better way to load maps and shit, no i haven't found it yet
         if (_mapLoader.TryLoadMap(resPath, out var map, out _, new DeserializationOptions { InitializeMaps = true }))
         {
+
+
             var entityUid = map.Value.Owner;
             var mapId = map.Value.Comp.MapId;
+
+            var restricted = new RestrictedRangeComponent
+            {
+                Range = 64f
+            };
+            AddComp(entityUid, restricted);
+
             //_metadata.SetEntityName(entityUid,"The Dark");
             _mapSystem.SetPaused(mapId, false);
 
