@@ -6,6 +6,7 @@ using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.Actions;
 using Content.Omu.Server.Darksci.Components;
+using Content.Omu.Shared.Darksci.Components;
 using Robust.Shared.Map;
 using Content.Shared.Destructible.Thresholds;
 using Robust.Shared.Random;
@@ -25,9 +26,6 @@ public sealed class DarkswapSystem : EntitySystem
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
-
-    EntityCoordinates originLoc;
-
     private EntityQuery<PhysicsComponent> _physicsQuery;
     public override void Initialize()
     {
@@ -44,6 +42,9 @@ public sealed class DarkswapSystem : EntitySystem
 
     private void OnDarkswap(EntityUid uid, DarkswapComponent component, ref DarkswapEvent args)
     {
+
+
+
         if (TryComp<PullableComponent>(uid, out var pullable) && _pullingSystem.IsPulled(uid, pullable))
             return;
 
@@ -63,34 +64,76 @@ public sealed class DarkswapSystem : EntitySystem
             return;
         }
 
+        // ensures originLoc is NEVER empty. this is required so the code doesnt throw errors.
+        if(component.originLoc == null) {component.originLoc = Transform(uid).Coordinates;}
 
-        if(!component.inDark){
-            originLoc = Transform(uid).Coordinates;
+        //this could probably be moved into the teleport logic however i dont want to touch it in fear of everything breaking
+        if(!component.inDark)
+        {
+            component.originLoc = Transform(uid).Coordinates;
         }
 
         var darkLoc = Transform(darkUid.Value).Coordinates;
 
-        var newCoords = originLoc;
+        var newCoords = component.originLoc.Value;
 
         if(!component.inDark){
             var xform = Transform(darkUid.Value);
             var coords = xform.Coordinates;
-            var MaxRandomRadius = 30;
-            var MaxRandomTeleportAttempts = 10;
-            //Sets a random coordinate for it to attempt off of, main idea being you appear in a random part of darkspace
+            var MaxRandomRadius = 32;
+            //var MaxRandomTeleportAttempts = 10;
+            // Sets a random very far coordinate for it to attempt off of, main idea being you appear in a random part of darkspace
             var randPos = coords.Offset(_random.NextVector2(MaxRandomRadius));
-            //
+
             newCoords = randPos;
-            for (var i = 0; i < MaxRandomTeleportAttempts; i++)
-            {
-                //should work the vast majority of cases, because this is teleporting you to a planet map, we don't need to worry about throwing them into space and the right position isn't quite as important
-                var randVector = new Vector2(1,1);
-                newCoords = randPos.Offset(randVector);
-                if (!_lookup.AnyEntitiesIntersecting(_transform.ToMapCoordinates(newCoords), LookupFlags.Static))
-                {
-                    break;
-                }
-            }
+
+
+
+            // this is the evil sphagetti shitcode function of doom. In essence what we are doing here is checking a load of random positions to make sure they arent inside a wall,
+            // and if they are we see if we can offset it to make it not inside a wall. Not a fan of this solution but i want to avoid teleporting people into a wall if i can help it.
+
+            // commented out for the time being as it is not working.
+            // TODO: fix this shit.
+
+            // bool handled = false;
+            // for (var i = 0; i < MaxRandomTeleportAttempts; i++)
+            // {
+            //     if (handled != true) {
+            //         randPos = coords.Offset(_random.NextVector2(MaxRandomRadius));
+
+            //         newCoords = randPos.Offset(new Vector2(0.5f, 0.5f));
+
+
+
+            //         var lookup = _lookup.GetEntitiesIntersecting(newCoords);
+            //         if (lookup.Count == 0)
+            //         {
+            //             handled = true;
+            //             break;
+            //         }
+            //         for (var j = 0; j < MaxRandomTeleportAttempts; j++)
+            //         {
+
+
+            //             var randVector = new Vector2(1,1);
+            //             newCoords = newCoords.Offset(randVector);
+            //             lookup = _lookup.GetEntitiesIntersecting(newCoords);
+            //             if (lookup.Count == 0)
+            //             {
+            //                 handled = true;
+            //                 break;
+            //             }
+            //         }
+
+            //     }
+            // }
+
+
+
+
+
+            //bandaid fix for coordinates
+
             _transform.SetCoordinates(uid, newCoords);
 
             component.inDark = true;
@@ -99,7 +142,7 @@ public sealed class DarkswapSystem : EntitySystem
         {
             component.inDark = false;
 
-            _transform.SetCoordinates(uid, originLoc);
+            _transform.SetCoordinates(uid, component.originLoc.Value);
         }
     }
 }
