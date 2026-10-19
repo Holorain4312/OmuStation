@@ -161,6 +161,18 @@
   - MagazinePistol
 
 - type: selectableSet
+  id: WeaponGuildMk58Set
+  name: selectable-set-mk58-name
+  description: selectable-set-mk58-description
+  sprite:
+    sprite: Objects/Weapons/Guns/Pistols/mk58.rsi
+    state: base
+  content:
+  - WeaponPistolGuildMk58
+  - MagazinePistol
+  - MagazinePistol
+
+- type: selectableSet
   id: WeaponT8Set
   name: selectable-set-t8-name
   description: selectable-set-t8-description

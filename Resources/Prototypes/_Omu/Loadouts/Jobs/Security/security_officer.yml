@@ -52,6 +52,17 @@
   groupBy: "Main weapon"
 
 - type: loadout
+  id: SecurityOfficerGuildMk58
+  dummyEntity: WeaponPistolGuildMk58
+  equipment:
+    pocket1: WeaponPistolGuildMk58
+  storage:
+    back:
+    - MagazinePistol
+    - MagazinePistol
+  groupBy: "Main weapon"
+
+- type: loadout
   id: SecurityOfficerSecurityDutyRevolver
   dummyEntity: SecurityDutyRevolver
   equipment:

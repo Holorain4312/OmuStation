@@ -70,6 +70,7 @@
   - type: SetSelector
     possibleSets:
     - WeaponMk58Set
+    - WeaponGuildMk58Set
     - WeaponT8Set
     - WeaponEG1Set
     maxSelectedSets: 1
@@ -86,6 +87,7 @@
   - type: SetSelector
     possibleSets:
     - WeaponMk58Set
+    - WeaponGuildMk58Set
     - WeaponT8Set
     - WeaponEG1Set
     - BrigmedWeaponCrossbowSyringeSet
@@ -121,6 +123,7 @@
   - type: SetSelector
     possibleSets:
     - WeaponMk58Set
+    - WeaponGuildMk58Set
     - WeaponT8Set
     - WeaponEG1Set
     - WeaponCeremonialRifleSet
